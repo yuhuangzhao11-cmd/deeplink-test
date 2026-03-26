@@ -3,19 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <title>Deeplink Test</title>
-  <script type="text/javascript" src="https://appx/webview.min.js"></script>
 </head>
 <body>
-  <h2>Test Deeplink via Mini Program</h2>
-  <button onclick="openDeeplink()">Abrir MiClaro (Fixed)</button>
+
+  <h2>Test Deeplink Claro</h2>
+
+  <!-- BOTÓN SIMPLE -->
+  <a href="https://miclaro.onelink.me/oqm4/jowqiqyn">
+    <button>Abrir MiClaro Deeplink</button>
+  </a>
+
+  <br><br>
+
+  <!-- BOTÓN CON JS -->
+  <button onclick="openDeeplink()">Abrir Deeplink (JS)</button>
 
   <script>
     function openDeeplink() {
-      // 告诉小程序：我想跳转了
-      my.postMessage({
-        action: 'jumpToMiniProgram'
-      });
+      window.location.href = "https://miclaro.onelink.me/oqm4/jowqiqyn";
     }
   </script>
+
 </body>
 </html>
