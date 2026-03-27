@@ -3,28 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub H5 Test</title>
+    <title>GitHub H5 Jump Test</title>
     <script src="https://appx/web-view.min.js"></script>
 </head>
-<body style="padding: 20px; text-align: center;">
-    <button id="jumpBtn" style="width: 80%; height: 50px; background: #1677ff; color: white; border: none; border-radius: 5px;">
-        从 GitHub H5 跳转小程序
+<body style="padding: 50px; text-align: center; font-family: sans-serif;">
+
+    <button id="jumpBtn" style="width: 100%; height: 60px; background: #1677ff; color: white; border: none; border-radius: 8px; font-size: 18px;">
+        跳转至目标小程序
     </button>
 
+    <p id="status" style="margin-top: 20px; color: #999;">正在检测环境...</p>
+
     <script>
-        document.getElementById('jumpBtn').onclick = function() {
-            // 确保在小程序环境
-            if (window.my && my.navigateToMiniProgram) {
+        var statusEl = document.getElementById('status');
+        var jumpBtn = document.getElementById('jumpBtn');
+
+        // 封装一个确保 my 对象可用的函数
+        function ready(callback) {
+            if (window.my && window.my.navigateToMiniProgram) {
+                callback();
+            } else {
+                document.addEventListener('AlipayJSBridgeReady', callback, false);
+            }
+        }
+
+        ready(function() {
+            statusEl.innerText = "小程序环境已就绪";
+            statusEl.style.color = "green";
+
+            jumpBtn.onclick = function() {
+                console.log('发起跳转请求...');
                 my.navigateToMiniProgram({
                     appId: '3482020229287147',
-                    appendedUrlPart: '', 
-                    success: (res) => { console.log('Success'); },
-                    fail: (err) => { alert('Fail: ' + JSON.stringify(err)); }
+                    success: (res) => {
+                        console.log('跳转指令已发出');
+                    },
+                    fail: (err) => {
+                        alert('跳转失败: ' + JSON.stringify(err));
+                    }
                 });
-            } else {
-                alert('请在支付宝小程序内打开此页面');
+            };
+        });
+
+        // 兜底逻辑：如果 3 秒后还没 ready，说明真的不在小程序里
+        setTimeout(function() {
+            if (statusEl.innerText === "正在检测环境...") {
+                statusEl.innerText = "错误：未检测到小程序环境";
+                statusEl.style.color = "red";
             }
-        };
+        }, 3000);
     </script>
 </body>
 </html>
