@@ -3,55 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub H5 Jump Test</title>
-    <script src="https://appx/web-view.min.js"></script>
+    <title>H5 JSAPI Test</title>
 </head>
-<body style="padding: 50px; text-align: center; font-family: sans-serif;">
+<body style="padding: 50px; text-align: center;">
 
     <button id="jumpBtn" style="width: 100%; height: 60px; background: #1677ff; color: white; border: none; border-radius: 8px; font-size: 18px;">
-        跳转至目标小程序
+        使用 Bridge 跳转
     </button>
 
-    <p id="status" style="margin-top: 20px; color: #999;">正在检测环境...</p>
-
     <script>
-        var statusEl = document.getElementById('status');
-        var jumpBtn = document.getElementById('jumpBtn');
-
-        // 封装一个确保 my 对象可用的函数
-        function ready(callback) {
-            if (window.my && window.my.navigateToMiniProgram) {
-                callback();
-            } else {
-                document.addEventListener('AlipayJSBridgeReady', callback, false);
-            }
-        }
-
-        ready(function() {
-            statusEl.innerText = "小程序环境已就绪";
-            statusEl.style.color = "green";
-
-            jumpBtn.onclick = function() {
-                console.log('发起跳转请求...');
-                my.navigateToMiniProgram({
+        document.getElementById('jumpBtn').onclick = function() {
+            // 按照截图中的写法：判断是否存在，然后直接调用
+            if (window.AlipayJSBridge) {
+                AlipayJSBridge.call('navigateToMiniProgram', {
                     appId: '3482020229287147',
-                    success: (res) => {
-                        console.log('跳转指令已发出');
-                    },
-                    fail: (err) => {
-                        alert('跳转失败: ' + JSON.stringify(err));
+                    // H5+ 小程序跳转通常建议带上这个参数，空字符串代表首页
+                    appendedUrlPart: '' 
+                }, function(data) {
+                    // 这里的 data 就是回调结果
+                    console.log('Result: ' + JSON.stringify(data));
+                    if (data.error) {
+                        alert('跳转失败代码: ' + data.error);
                     }
                 });
-            };
-        });
-
-        // 兜底逻辑：如果 3 秒后还没 ready，说明真的不在小程序里
-        setTimeout(function() {
-            if (statusEl.innerText === "正在检测环境...") {
-                statusEl.innerText = "错误：未检测到小程序环境";
-                statusEl.style.color = "red";
+            } else {
+                // 如果没加载好，监听 ready 事件后再试
+                alert('Bridge 尚未准备好，请稍后再试');
             }
-        }, 3000);
+        };
+
+        // 建议增加这个监听，确保 Bridge 注入成功
+        document.addEventListener('AlipayJSBridgeReady', function() {
+            console.log('AlipayJSBridge 已经就绪');
+        }, false);
     </script>
 </body>
 </html>
