@@ -1,28 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Deeplink Test</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub H5 Test</title>
+    <script src="https://appx/web-view.min.js"></script>
 </head>
-<body>
+<body style="padding: 20px; text-align: center;">
+    <button id="jumpBtn" style="width: 80%; height: 50px; background: #1677ff; color: white; border: none; border-radius: 5px;">
+        从 GitHub H5 跳转小程序
+    </button>
 
-  <h2>Test Deeplink Claro</h2>
-
-  <!-- BOTÓN SIMPLE -->
-  <a href="https://miclaro.onelink.me/oqm4/jowqiqyn">
-    <button>Abrir MiClaro Deeplink</button>
-  </a>
-
-  <br><br>
-
-  <!-- BOTÓN CON JS -->
-  <button onclick="openDeeplink()">Abrir Deeplink (JS)</button>
-
-  <script>
-    function openDeeplink() {
-      window.location.href = "https://miclaro.onelink.me/oqm4/jowqiqyn";
-    }
-  </script>
-
+    <script>
+        document.getElementById('jumpBtn').onclick = function() {
+            // 确保在小程序环境
+            if (window.my && my.navigateToMiniProgram) {
+                my.navigateToMiniProgram({
+                    appId: '3482020229287147',
+                    appendedUrlPart: '', 
+                    success: (res) => { console.log('Success'); },
+                    fail: (err) => { alert('Fail: ' + JSON.stringify(err)); }
+                });
+            } else {
+                alert('请在支付宝小程序内打开此页面');
+            }
+        };
+    </script>
 </body>
 </html>
